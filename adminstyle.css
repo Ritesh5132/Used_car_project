@@ -75,3 +75,20 @@
     height: 25px;
 
 }
+
+/* brandinsert.php */
+.formset{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    /* width: 800px; */
+    height: 100vh;
+}
+
+.form-input{
+    /* height: 6vh; */
+    margin-top: 20px;
+    padding-top: 30px;
+    width: 450px;
+}
