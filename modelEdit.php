@@ -1,28 +1,29 @@
 <?php
 include "../db.php";
-$brandSql = "SELECT * FROM brand";
-$brandresult = mysqli_query($connection, $brandSql);
+$model_id = $_REQUEST['model_id'];
+// select query for brand
+$brandsql = "SELECT * FROM brand";
+$brandresult = mysqli_query($connection, $brandsql);
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {;
-    $model_name = $transmission = $fuel = $cartype = '';
-    $model_name = $_POST['model'];
-    $transmission = $_POST['transmission'];
-    $fuel = $_POST['fuel'];
-    $cartype = $_POST['cartype'];
-    $brand = $_POST['brand'];
+//Select query for model
+$editSql = "SELECT * FROM model WHERE model_id = '$model_id'";
+$editResult = mysqli_query($connection, $editSql);
+if (mysqli_num_rows($editResult) > 0) {
+    $data = mysqli_fetch_assoc($editResult);
+        $model_id = $data['model_id'];
+        $model_name = $data['model_name'];
+        $transmission_type = $data['transmission_type'];
+        $brand_id = $data['brand_id'];
+        $fuel_name = $data['fuel_name'];
+        $car_type = $data['car_type'];
 
-    $insertSql = "INSERT INTO `model`(`model_name`, `transmission_type`,`brand_id`, `fuel_name`, `car_type`) VALUES ('$model_name','$transmission',$brand ,'$fuel','$cartype')"; 
-    $insertResult = mysqli_query($connection, $insertSql);
-    if ($insertResult) {
-        echo "inserted";
-    } else {
-        echo "not inserted";
-    }
+
+    
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -30,35 +31,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {;
     <link rel="stylesheet" href="../css/bootstrap.min.css">
     <link rel="stylesheet" href="./adminstyle.css">
 </head>
-
 <body>
-    <div class="container">
-        <h2 class="text-center mt-3">Insert Model</h2>
+<div class="container">
+        <h2 class="text-center mt-3">Update Model</h2>
         <div class="modelform mt-3">
             <form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
                 <div class="row flex-column align-items-center border modelform-set justify-content-around">
-                    <input type="hidden" name="model_id" value="">
-                    <input type="hidden" name="brand_id" value="">
-
+                    <input type="hidden" name="model_id" value="<?php echo $model_id?>">
                     <div class="col-6 mt-2">
                         <div class="form-group">
                             <label for="model">Model Name:</label>
-                            <input type="text" name="model" value="" class="form-control" required>
+                            <input type="text" name="model" value="<?php echo $model_name?>" class="form-control" required>
                         </div>
                     </div>
 
                     <div class="col-6">
                         <div class="form-group">
-                            <label for="brand">Select Brand:</label>
+                            <label for="brand">Update Brand:</label>
                             <select name="brand" id="" class="form-control" required>
                                 <option value="" selected disabled>Select Brand</option>
-                                <?php
-                                if (mysqli_num_rows($brandresult) > 0) {
+                               <?php
+                               
+                               if (mysqli_num_rows($brandresult) > 0) {
                                     while ($row = mysqli_fetch_assoc($brandresult)) {
-                                        echo '<option value="' . $row['brand_id'] . '">' . $row['brand_name'] . '</option>';
+                                        if ($row['brand_id'] == $data['brand_id']) {
+                                            $select = "selected";
+                                        }else{
+                                            $select = "";
+                                        }
+                                        echo '<option value="'.$row['brand_id'].'">'.$row['brand_name'].'</option>';
                                     }
-                                }
-                                ?>
+                               }else{
+                                echo "brand data not found";
+                               }
+                               
+                               
+                               ?>
                             </select>
                         </div>
                     </div>
@@ -110,5 +118,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {;
     </div>
     <script src="../js/bootstrap.min.js"></script>
 </body>
-
 </html>
